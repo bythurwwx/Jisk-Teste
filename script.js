@@ -109,12 +109,30 @@ const questions = [
 
 // ... (Cole aqui toda aquela lista de 100 perguntas da resposta anterior) ...
 
-let currentQuestion = 0;
 
-function updateProgress() {
+const questions = [
+    { q: "1. Como se diz 'Bom dia'?", options: ["Bonjour", "Merci", "Salut"], correct: "Bonjour" },
+    { q: "2. O que significa 'Pomme'?", options: ["Pão", "Maçã", "Batata"], correct: "Maçã" },
+    { q: "3. Qual a tradução de 'L'eau'?", options: ["O fogo", "O leite", "A água"], correct: "A água" },
+    // ... (As outras perguntas de 4 a 100 devem ficar aqui dentro igual ao exemplo anterior)
+    { q: "100. 'Félicitations' significa:", options: ["Obrigado", "Parabéns", "Oi"], correct: "Parabéns" }
+];
+
+// Para economizar espaço, use a lista completa que te enviei antes entre as questões 4 e 100.
+
+let currentQuestion = 0;
+let lives = 3;
+
+function updateDisplay() {
     const percent = ((currentQuestion + 1) / questions.length) * 100;
     document.getElementById("progress-bar").style.width = percent + "%";
     document.getElementById("stats").innerText = `Questão: ${currentQuestion + 1} / ${questions.length}`;
+    
+    let heartIcons = "";
+    for(let i=0; i<3; i++) {
+        heartIcons += (i < lives) ? "❤️" : "🖤";
+    }
+    document.getElementById("lives").innerText = `Vidas: ${heartIcons}`;
 }
 
 function loadQuestion() {
@@ -124,7 +142,7 @@ function loadQuestion() {
     const feedback = document.getElementById("feedback");
     const nextBtn = document.getElementById("next-btn");
 
-    updateProgress();
+    updateDisplay();
     questionEl.innerText = qData.q;
     optionsDiv.innerHTML = "";
     feedback.innerText = "";
@@ -144,7 +162,6 @@ function checkAnswer(selected) {
     const nextBtn = document.getElementById("next-btn");
     const allButtons = document.querySelectorAll("#options button");
 
-    // Desativa botões após escolher
     allButtons.forEach(b => b.disabled = true);
 
     if (selected === questions[currentQuestion].correct) {
@@ -160,14 +177,29 @@ function checkAnswer(selected) {
             }
         };
     } else {
-        feedback.innerText = "Dommage! ❌ Voltando ao início...";
-        feedback.style.color = "var(--f-red)";
-        nextBtn.innerText = "Recomeçar do zero";
-        nextBtn.classList.add("error-state");
-        nextBtn.onclick = () => {
-            currentQuestion = 0;
-            loadQuestion();
-        };
+        lives--;
+        updateDisplay();
+        
+        if (lives > 0) {
+            feedback.innerText = `Attention! ❌ Você perdeu uma vida. Restam ${lives}.`;
+            feedback.style.color = "orange";
+            nextBtn.innerText = "Tentar novamente esta questão";
+            nextBtn.onclick = () => {
+                allButtons.forEach(b => b.disabled = false);
+                feedback.innerText = "";
+                nextBtn.classList.add("hidden");
+            };
+        } else {
+            feedback.innerText = "GAME OVER! 💀 Suas vidas acabaram.";
+            feedback.style.color = "var(--f-red)";
+            nextBtn.innerText = "Reiniciar do Zero";
+            nextBtn.classList.add("error-state");
+            nextBtn.onclick = () => {
+                currentQuestion = 0;
+                lives = 3;
+                loadQuestion();
+            };
+        }
     }
     nextBtn.classList.remove("hidden");
 }
@@ -175,11 +207,13 @@ function checkAnswer(selected) {
 function showWin() {
     document.getElementById("quiz").innerHTML = `
         <div style="font-size: 50px;">🏆</div>
-        <h2>Félicitations!</h2>
-        <p>Você completou o desafio das 100 palavras!</p>
+        <h2>Incroyable!</h2>
+        <p>Você zerou o jogo com ${lives} vidas restantes!</p>
     `;
     document.getElementById("next-btn").classList.add("hidden");
 }
 
 loadQuestion();
+
+    
 
