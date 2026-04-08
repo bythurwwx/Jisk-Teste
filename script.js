@@ -107,7 +107,15 @@ const questions = [
     { q: "100. 'Félicitations' significa:", options: ["Obrigado", "Parabéns", "Oi"], correct: "Parabéns" }
 ];
 
+// ... (Cole aqui toda aquela lista de 100 perguntas da resposta anterior) ...
+
 let currentQuestion = 0;
+
+function updateProgress() {
+    const percent = ((currentQuestion + 1) / questions.length) * 100;
+    document.getElementById("progress-bar").style.width = percent + "%";
+    document.getElementById("stats").innerText = `Questão: ${currentQuestion + 1} / ${questions.length}`;
+}
 
 function loadQuestion() {
     const qData = questions[currentQuestion];
@@ -116,11 +124,12 @@ function loadQuestion() {
     const feedback = document.getElementById("feedback");
     const nextBtn = document.getElementById("next-btn");
 
-    // Mostra o progresso atual
+    updateProgress();
     questionEl.innerText = qData.q;
     optionsDiv.innerHTML = "";
     feedback.innerText = "";
     nextBtn.classList.add("hidden");
+    nextBtn.classList.remove("error-state");
 
     qData.options.forEach(opt => {
         const btn = document.createElement("button");
@@ -133,32 +142,44 @@ function loadQuestion() {
 function checkAnswer(selected) {
     const feedback = document.getElementById("feedback");
     const nextBtn = document.getElementById("next-btn");
+    const allButtons = document.querySelectorAll("#options button");
+
+    // Desativa botões após escolher
+    allButtons.forEach(b => b.disabled = true);
 
     if (selected === questions[currentQuestion].correct) {
-        feedback.innerText = "Correct! ✅ Continue assim!";
+        feedback.innerText = "Très bien! ✅";
         feedback.style.color = "green";
-        nextBtn.innerText = "Próxima Pergunta";
-        nextBtn.classList.remove("hidden");
-        // Lógica para avançar
+        nextBtn.innerText = "Próxima";
         nextBtn.onclick = () => {
             currentQuestion++;
             if (currentQuestion < questions.length) {
                 loadQuestion();
             } else {
-                document.getElementById("quiz").innerHTML = "<h2>EXCELLENT! 🏆 Você dominou as 100 palavras em francês sem errar!</h2>";
+                showWin();
             }
         };
     } else {
-        feedback.innerText = "ERREUR! ❌ Você errou e o jogo reiniciou.";
-        feedback.style.color = "red";
-        nextBtn.innerText = "Voltar ao Início";
-        nextBtn.classList.remove("hidden");
-        // Lógica para reiniciar TOTAL
+        feedback.innerText = "Dommage! ❌ Voltando ao início...";
+        feedback.style.color = "var(--f-red)";
+        nextBtn.innerText = "Recomeçar do zero";
+        nextBtn.classList.add("error-state");
         nextBtn.onclick = () => {
             currentQuestion = 0;
             loadQuestion();
         };
     }
+    nextBtn.classList.remove("hidden");
+}
+
+function showWin() {
+    document.getElementById("quiz").innerHTML = `
+        <div style="font-size: 50px;">🏆</div>
+        <h2>Félicitations!</h2>
+        <p>Você completou o desafio das 100 palavras!</p>
+    `;
+    document.getElementById("next-btn").classList.add("hidden");
 }
 
 loadQuestion();
+
