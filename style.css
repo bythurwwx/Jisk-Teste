@@ -1,0 +1,100 @@
+:root {
+    --f-blue: #002395;
+    --f-white: #ffffff;
+    --f-red: #ed2939;
+    --bg: #f4f7f6;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.game-container {
+    background: white;
+    width: 90%;
+    max-width: 500px;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+h1 {
+    color: var(--f-blue);
+    margin-bottom: 10px;
+}
+
+/* Barra de Progresso */
+.progress-container {
+    background: #e0e0e0;
+    height: 10px;
+    border-radius: 5px;
+    margin: 20px 0;
+    overflow: hidden;
+}
+
+#progress-bar {
+    background: linear-gradient(to right, var(--f-blue), var(--f-red));
+    width: 1%;
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+#stats {
+    font-weight: bold;
+    color: #666;
+}
+
+h2 {
+    font-size: 1.4rem;
+    margin-bottom: 25px;
+    color: #333;
+}
+
+.options-grid {
+    display: grid;
+    gap: 12px;
+}
+
+button {
+    padding: 15px;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    background: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+button:hover {
+    border-color: var(--f-blue);
+    background: #f0f4ff;
+}
+
+#next-btn {
+    margin-top: 25px;
+    width: 100%;
+    background: var(--f-blue);
+    color: white;
+    border: none;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+#next-btn.error-state {
+    background: var(--f-red);
+}
+
+.hidden { display: none; }
+
+#feedback {
+    margin-top: 20px;
+    font-weight: bold;
+    min-height: 24px;
+}
